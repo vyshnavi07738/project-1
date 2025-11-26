@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seat Allotment Management System - ITP Project</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            overflow: hidden;
+        }
+        
+        .slide-container {
+            display: flex;
+            height: 100vh;
+            position: relative;
+        }
+        
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 60px;
+            color: #f1f5f9;
+            animation: slideIn 0.8s ease-in-out;
+            overflow-y: auto;
+        }
+        
+        .slide.active { display: flex; flex-direction: column; justify-content: center; }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* Slide Themes */
+        .slide.title-slide {
+            background: linear-gradient(135deg, #1a0033 0%, #330066 100%);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .slide.content-slide {
+            background: linear-gradient(135deg, #0f172a 0%, #1a1f35 100%);
+        }
+        
+        /* Typography */
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #a78bfa;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: fadeInDown 0.8s ease-out;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            color: #a78bfa;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #a78bfa;
+            padding-bottom: 15px;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+        
+        h3 {
+            font-size: 1.8rem;
+            color: #c4b5fd;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        p, li {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #cbd5e1;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+        
+        .subtitle {
+            font-size: 1.8rem;
+            color: #cbd5e1;
+            margin-top: 30px;
+        }
+        
+        .meta {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-top: 50px;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-top: 15px;
+        }
+        
+        li {
+            margin-bottom: 12px;
+            list-style-position: inside;
+        }
+        
+        .feature-box {
+            background: rgba(30, 41, 59, 0.8);
+            border-left: 4px solid #a78bfa;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 4px;
+            animation: fadeInLeft 0.8s ease-out 0.3s backwards;
+        }
+        
+        .code-block {
+            background: #1e293b;
+            border: 1px solid #a78bfa;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            color: #c4b5fd;
+        }
+        
+        .button-group {
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        button {
+            background: #a78bfa;
+            color: #0f172a;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #c4b5fd;
+            transform: scale(1.05);
+        }
+        
+        button:active { transform: scale(0.95); }
+        
+        .slide-counter {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            font-size: 1.1rem;
+            color: #a78bfa;
+            font-weight: 600;
+        }
+        
+        .nav-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 30px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .highlight {
+            color: #c4b5fd;
+            font-weight: 600;
+        }
+        
+        .grid-layout {
+            background: #1e293b;
+            padding: 20px;
+            border: 2px solid #a78bfa;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 20px 0;
+        }
+        
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .column {
+            animation: fadeInUp 0.8s ease-out 0.3s backwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <!-- Slide 1: Title -->
+        <div class="slide title-slide active">
+            <div>
+                <h1>🪑 Seat Allotment Management System</h1>
+                <p class="subtitle">Smart Seating Layout with C Arrays</p>
+                <p class="meta">ITP Course Project • SAI University, Chennai</p>
+            </div>
+        </div>
+
+        <!-- Slide 2: Introduction -->
+        <div class="slide content-slide">
+            <h2>What is Seat Allotment?</h2>
+            <p>A system that manages seat reservations in halls, classrooms, or theaters using a 2D grid structure.</p>
+            <div class="feature-box">
+                <h3>Real-World Applications</h3>
+                <ul>
+                    <li>Movie theater seat booking</li>
+                    <li>Classroom seating arrangements</li>
+                    <li>Conference room management</li>
+                    <li>Transportation (bus/train seating)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 3: Problem Statement -->
+        <div class="slide content-slide">
+            <h2>The Challenge</h2>
+            <p>Manual seat management is:</p>
+            <ul>
+                <li>❌ Error-prone (double bookings)</li>
+                <li>❌ Time-consuming (manual checking)</li>
+                <li>❌ Disorganized (no clear layout)</li>
+            </ul>
+            <p style="margin-top: 30px;"><span class="highlight">Solution:</span> Automated system using 2D arrays to track availability in real-time.</p>
+        </div>
+
+        <!-- Slide 4: Solution Overview -->
+        <div class="slide content-slide">
+            <h2>Our Solution</h2>
+            <p>A <span class="highlight">clean, efficient</span> Seat Allotment System in C</p>
+            <ul>
+                <li>✓ Visual seat layout display</li>
+                <li>✓ Instant seat reservation</li>
+                <li>✓ Cancellation with confirmation</li>
+                <li>✓ Input validation</li>
+                <li>✓ User-friendly menu interface</li>
+            </ul>
+        </div>
+
+        <!-- Slide 5: Core Features - Part 1 -->
+        <div class="slide content-slide">
+            <h2>Main Features</h2>
+            <div class="feature-box">
+                <h3>Display Seats</h3>
+                <p>View current layout with rows and seat numbers. 0 = available, 1 = reserved</p>
+            </div>
+            <div class="feature-box">
+                <h3>Reserve Seat</h3>
+                <p>Book a seat by selecting row and seat number with instant validation</p>
+            </div>
+            <div class="feature-box">
+                <h3>Cancel Reservation</h3>
+                <p>Release a reserved seat with confirmation to prevent accidents</p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Data Structure -->
+        <div class="slide content-slide">
+            <h2>2D Array Architecture</h2>
+            <h3>Layout: 4 Rows × 10 Seats</h3>
+            <div class="grid-layout">
+int seats[4][10] = {0};<br><br>
+Where:<br>
+0 = Seat is available (empty)<br>
+1 = Seat is reserved (booked)
+            </div>
+            <p>Configuration through ROWS and COLS macros makes it scalable to any size.</p>
+        </div>
+
+        <!-- Slide 7: Sample Seating -->
+        <div class="slide content-slide">
+            <h2>Example Seating Layout</h2>
+            <div class="grid-layout">
+       Seats<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1  2  3  4  5  6  7  8  9 10<br>
+Row 1: 0  1  0  1  0  0  1  0  1  0<br>
+Row 2: 1  0  0  0  1  0  0  0  0  1<br>
+Row 3: 0  0  1  0  0  1  0  1  0  0<br>
+Row 4: 1  1  0  0  0  0  1  0  1  1
+            </div>
+            <p style="margin-top: 15px;">Green (0) = available | Red (1) = booked</p>
+        </div>
+
+        <!-- Slide 8: Key Functions -->
+        <div class="slide content-slide">
+            <h2>Core Functions</h2>
+            <div class="feature-box">
+                <h3>displaySeats()</h3>
+                <p>Prints formatted seating layout with proper alignment</p>
+            </div>
+            <div class="feature-box">
+                <h3>reserveSeat()</h3>
+                <p>Books a seat after range and availability checks</p>
+            </div>
+            <div class="feature-box">
+                <h3>cancelReservation()</h3>
+                <p>Cancels a reservation after validation</p>
+            </div>
+        </div>
+
+        <!-- Slide 9: Input Validation -->
+        <div class="slide content-slide">
+            <h2>Smart Validation</h2>
+            <h3>Checks performed for every operation:</h3>
+            <ul>
+                <li>✓ Row number within 1 to ROWS</li>
+                <li>✓ Seat number within 1 to COLS</li>
+                <li>✓ Seat not already reserved (for booking)</li>
+                <li>✓ Seat is reserved (for cancellation)</li>
+                <li>✓ User confirmation for irreversible actions</li>
+            </ul>
+            <p style="margin-top: 20px;">Invalid inputs trigger helpful error messages.</p>
+        </div>
+
+        <!-- Slide 10: Program Flow -->
+        <div class="slide content-slide">
+            <h2>Execution Flow</h2>
+            <ol>
+                <li>Initialize 2D array with all 0s (all seats free)</li>
+                <li>Display menu with 4 options</li>
+                <li>Get user choice and validate input</li>
+                <li>Execute corresponding function:
+                    <ul style="margin-top: 10px;">
+                        <li>Option 1: Show current layout</li>
+                        <li>Option 2: Book seat → update array</li>
+                        <li>Option 3: Cancel → confirm → update array</li>
+                        <li>Option 4: Exit program</li>
+                    </ul>
+                </li>
+                <li>Loop until user exits</li>
+            </ol>
+        </div>
+
+        <!-- Slide 11: Menu Interface -->
+        <div class="slide content-slide">
+            <h2>User Menu</h2>
+            <div class="code-block">
+--- Seat Layout Management ---<br>
+1. Display Seats<br>
+2. Reserve Seat<br>
+3. Cancel Reservation<br>
+4. Exit<br>
+Enter your choice:
+            </div>
+            <p style="margin-top: 20px;">Simple, intuitive, and easy to navigate!</p>
+        </div>
+
+        <!-- Slide 12: Compilation -->
+        <div class="slide content-slide">
+            <h2>How to Run</h2>
+            <h3>Compile:</h3>
+            <div class="code-block">
+gcc seat_allotment_management.c -o seat_allotment
+            </div>
+            <h3>Run:</h3>
+            <div class="code-block">
+./seat_allotment
+            </div>
+            <p style="margin-top: 20px;">No external dependencies. Pure C with standard library only!</p>
+        </div>
+
+        <!-- Slide 13: C Programming Concepts -->
+        <div class="slide content-slide">
+            <h2>Skills Demonstrated</h2>
+            <div class="two-column">
+                <div class="column">
+                    <h3>2D Arrays</h3>
+                    <p>Multi-dimensional data structures for grid representation</p>
+                </div>
+                <div class="column">
+                    <h3>Functions</h3>
+                    <p>Modular design with specific tasks</p>
+                </div>
+                <div class="column">
+                    <h3>Loops & Conditionals</h3>
+                    <p>Control flow and iteration logic</p>
+                </div>
+                <div class="column">
+                    <h3>Input Validation</h3>
+                    <p>Robust error handling and user input checking</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 14: Advanced Features -->
+        <div class="slide content-slide">
+            <h2>Learning Outcomes</h2>
+            <ul>
+                <li>Understanding 2D array indexing and manipulation</li>
+                <li>Implementing menu-driven programs</li>
+                <li>Input validation and error handling</li>
+                <li>User confirmation mechanisms</li>
+                <li>Formatted output and display</li>
+                <li>Problem decomposition into functions</li>
+            </ul>
+        </div>
+
+        <!-- Slide 15: Future Enhancements -->
+        <div class="slide content-slide">
+            <h2>Possible Extensions</h2>
+            <ul>
+                <li>Add passenger/customer names to seats</li>
+                <li>Generate booking confirmation receipts</li>
+                <li>Create reports (occupancy %, revenue)</li>
+                <li>Support variable seat types (regular, premium, VIP)</li>
+                <li>Implement pricing based on seat location</li>
+                <li>File storage for booking history</li>
+                <li>Graphical visualization of seating</li>
+            </ul>
+        </div>
+
+        <!-- Slide 16: Conclusion -->
+        <div class="slide content-slide">
+            <h2>Key Takeaways</h2>
+            <p>This project demonstrates how fundamental C programming constructs can model real-world seating systems.</p>
+            <div class="feature-box">
+                <h3>Achievement</h3>
+                <p>Built a <span class="highlight">robust, user-friendly seat management system</span> using 2D arrays, functions, and solid input validation.</p>
+            </div>
+        </div>
+
+        <!-- Slide 17: Q&A -->
+        <div class="slide title-slide">
+            <div>
+                <h1>Questions?</h1>
+                <p class="subtitle">Ready to discuss implementation and enhancements</p>
+                <p class="meta">Seat Allotment System • ITP Project</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-hint">Press ← → or Click buttons to navigate</div>
+    <div class="slide-counter"><span id="current">1</span> / <span id="total">17</span></div>
+
+    <div class="button-group">
+        <button onclick="previousSlide()">← Previous</button>
+        <button onclick="nextSlide()">Next →</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total').textContent = totalSlides;
+        
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            document.getElementById('current').textContent = currentSlide + 1;
+        }
+        
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+        
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') previousSlide();
+        });
+    </script>
+</body>
+</html>
